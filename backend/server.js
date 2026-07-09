@@ -37,8 +37,8 @@ app.use(helmet({
 
 // CORS Configuration
 app.use(cors({
-  origin: true, // Allow all origins for local development ease, or set to frontends port
-  credentials: true,
+  origin: "https://6a4f5f557a6262122c29a6ad--peka-hrms.netlify.app",
+  credentials: true
 }));
 
 // Rate Limiter
