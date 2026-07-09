@@ -20,6 +20,7 @@ import notificationRoutes from './routes/notificationRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import taskRoutes from './routes/taskRoutes.js';
 import documentRoutes from './routes/documentRoutes.js';
+import payrollRoutes from './routes/payrollRoutes.js';
 
 // Load environmental variables
 dotenv.config();
@@ -73,6 +74,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/documents', documentRoutes);
+app.use('/api/payroll', payrollRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

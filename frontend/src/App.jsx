@@ -3,9 +3,11 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import PortalLayout from './components/PortalLayout';
 
-// Pages
+// Public Pages
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
+import NotFoundPage from './pages/NotFoundPage';
+import NotificationsPage from './pages/NotificationsPage';
 
 // Employee Pages
 import EmployeeDashboard from './pages/employee/EmployeeDashboard';
@@ -13,6 +15,7 @@ import EmployeeAttendance from './pages/employee/EmployeeAttendance';
 import EmployeeLeaves from './pages/employee/EmployeeLeaves';
 import EmployeeTasks from './pages/employee/EmployeeTasks';
 import EmployeeProfile from './pages/employee/EmployeeProfile';
+import EmployeePayslips from './pages/employee/EmployeePayslips';
 
 // HR Pages
 import HRDashboard from './pages/hr/HRDashboard';
@@ -21,6 +24,7 @@ import HRLeaves from './pages/hr/HRLeaves';
 import HRRecruitment from './pages/hr/HRRecruitment';
 import HRDepartments from './pages/hr/HRDepartments';
 import HRTasks from './pages/hr/HRTasks';
+import HRPayroll from './pages/hr/HRPayroll';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -64,7 +68,6 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   }
 
   if (allowedRoles && !allowedRoles.includes(user.role)) {
-    // Redirect to the user's own portal home if they try to access a different portal
     const roleHome = {
       'Super Admin': '/admin',
       'HR': '/hr',
@@ -97,22 +100,22 @@ const PublicRoute = ({ children }) => {
 };
 
 // ────────────────────────────────────────────────────────────────────────────
-// RoleRedirect — redirects root "/" to appropriate portal or login
+// RoleRedirect — redirects root "/portal" to appropriate portal
 // ────────────────────────────────────────────────────────────────────────────
 const RoleRedirect = () => {
   const { user, loading } = useAuth();
-
   if (loading) return null;
-
   if (!user) return <Navigate to="/" replace />;
-
-  const roleHome = {
-    'Super Admin': '/admin',
-    'HR': '/hr',
-    'Employee': '/employee',
-  };
+  const roleHome = { 'Super Admin': '/admin', 'HR': '/hr', 'Employee': '/employee' };
   return <Navigate to={roleHome[user.role] || '/employee'} replace />;
 };
+
+// Helper: wrap a page in PortalLayout with role protection
+const Portal = ({ allowedRoles, children }) => (
+  <ProtectedRoute allowedRoles={allowedRoles}>
+    <PortalLayout>{children}</PortalLayout>
+  </ProtectedRoute>
+);
 
 // ────────────────────────────────────────────────────────────────────────────
 // App Router
@@ -120,198 +123,50 @@ const RoleRedirect = () => {
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* Public / Landing */}
-      <Route
-        path="/"
-        element={
-          <PublicRoute>
-            <LandingPage />
-          </PublicRoute>
-        }
-      />
-      <Route
-        path="/login"
-        element={
-          <PublicRoute>
-            <LoginPage />
-          </PublicRoute>
-        }
-      />
-
-      {/* Portal redirect after login */}
+      {/* ── Public ────────────────────────────────────────────────────────── */}
+      <Route path="/" element={<PublicRoute><LandingPage /></PublicRoute>} />
+      <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
       <Route path="/portal" element={<RoleRedirect />} />
 
-      {/* ── Employee Portal ─────────────────────────────────────────────── */}
-      <Route
-        path="/employee"
-        element={
-          <ProtectedRoute allowedRoles={['Employee']}>
-            <PortalLayout>
-              <EmployeeDashboard />
-            </PortalLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/employee/clock"
-        element={
-          <ProtectedRoute allowedRoles={['Employee']}>
-            <PortalLayout>
-              <EmployeeAttendance />
-            </PortalLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/employee/leaves"
-        element={
-          <ProtectedRoute allowedRoles={['Employee']}>
-            <PortalLayout>
-              <EmployeeLeaves />
-            </PortalLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/employee/tasks"
-        element={
-          <ProtectedRoute allowedRoles={['Employee']}>
-            <PortalLayout>
-              <EmployeeTasks />
-            </PortalLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/employee/profile"
-        element={
-          <ProtectedRoute allowedRoles={['Employee']}>
-            <PortalLayout>
-              <EmployeeProfile />
-            </PortalLayout>
-          </ProtectedRoute>
-        }
-      />
+      {/* ── Employee Portal ───────────────────────────────────────────────── */}
+      <Route path="/employee"          element={<Portal allowedRoles={['Employee']}><EmployeeDashboard /></Portal>} />
+      <Route path="/employee/clock"    element={<Portal allowedRoles={['Employee']}><EmployeeAttendance /></Portal>} />
+      <Route path="/employee/leaves"   element={<Portal allowedRoles={['Employee']}><EmployeeLeaves /></Portal>} />
+      <Route path="/employee/tasks"    element={<Portal allowedRoles={['Employee']}><EmployeeTasks /></Portal>} />
+      <Route path="/employee/profile"  element={<Portal allowedRoles={['Employee']}><EmployeeProfile /></Portal>} />
+      <Route path="/employee/payslips" element={<Portal allowedRoles={['Employee']}><EmployeePayslips /></Portal>} />
 
-      {/* ── HR Portal ───────────────────────────────────────────────────── */}
-      <Route
-        path="/hr"
-        element={
-          <ProtectedRoute allowedRoles={['HR']}>
-            <PortalLayout>
-              <HRDashboard />
-            </PortalLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/hr/employees"
-        element={
-          <ProtectedRoute allowedRoles={['HR']}>
-            <PortalLayout>
-              <HREmployees />
-            </PortalLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/hr/leaves"
-        element={
-          <ProtectedRoute allowedRoles={['HR']}>
-            <PortalLayout>
-              <HRLeaves />
-            </PortalLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/hr/recruitment"
-        element={
-          <ProtectedRoute allowedRoles={['HR']}>
-            <PortalLayout>
-              <HRRecruitment />
-            </PortalLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/hr/departments"
-        element={
-          <ProtectedRoute allowedRoles={['HR']}>
-            <PortalLayout>
-              <HRDepartments />
-            </PortalLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/hr/tasks"
-        element={
-          <ProtectedRoute allowedRoles={['HR']}>
-            <PortalLayout>
-              <HRTasks />
-            </PortalLayout>
-          </ProtectedRoute>
-        }
-      />
+      {/* ── HR Portal ─────────────────────────────────────────────────────── */}
+      <Route path="/hr"               element={<Portal allowedRoles={['HR']}><HRDashboard /></Portal>} />
+      <Route path="/hr/employees"     element={<Portal allowedRoles={['HR']}><HREmployees /></Portal>} />
+      <Route path="/hr/leaves"        element={<Portal allowedRoles={['HR']}><HRLeaves /></Portal>} />
+      <Route path="/hr/recruitment"   element={<Portal allowedRoles={['HR']}><HRRecruitment /></Portal>} />
+      <Route path="/hr/departments"   element={<Portal allowedRoles={['HR']}><HRDepartments /></Portal>} />
+      <Route path="/hr/tasks"         element={<Portal allowedRoles={['HR']}><HRTasks /></Portal>} />
+      <Route path="/hr/payroll"       element={<Portal allowedRoles={['HR']}><HRPayroll /></Portal>} />
 
-      {/* ── Super Admin Portal ──────────────────────────────────────────── */}
-      <Route
-        path="/admin"
-        element={
-          <ProtectedRoute allowedRoles={['Super Admin']}>
-            <PortalLayout>
-              <AdminDashboard />
-            </PortalLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/hrs"
-        element={
-          <ProtectedRoute allowedRoles={['Super Admin']}>
-            <PortalLayout>
-              <AdminHRManagement />
-            </PortalLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/logs"
-        element={
-          <ProtectedRoute allowedRoles={['Super Admin']}>
-            <PortalLayout>
-              <AdminLogs />
-            </PortalLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/settings"
-        element={
-          <ProtectedRoute allowedRoles={['Super Admin']}>
-            <PortalLayout>
-              <AdminSettings />
-            </PortalLayout>
-          </ProtectedRoute>
-        }
-      />
+      {/* ── Super Admin Portal ────────────────────────────────────────────── */}
+      <Route path="/admin"           element={<Portal allowedRoles={['Super Admin']}><AdminDashboard /></Portal>} />
+      <Route path="/admin/hrs"       element={<Portal allowedRoles={['Super Admin']}><AdminHRManagement /></Portal>} />
+      <Route path="/admin/logs"      element={<Portal allowedRoles={['Super Admin']}><AdminLogs /></Portal>} />
+      <Route path="/admin/settings"  element={<Portal allowedRoles={['Super Admin']}><AdminSettings /></Portal>} />
 
-      {/* ── Catch-all 404 ───────────────────────────────────────────────── */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* ── Shared: Notifications (all logged-in roles) ───────────────────── */}
+      <Route path="/notifications"   element={<ProtectedRoute allowedRoles={['Employee','HR','Super Admin']}><PortalLayout><NotificationsPage /></PortalLayout></ProtectedRoute>} />
+
+      {/* ── 404 ───────────────────────────────────────────────────────────── */}
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 };
 
 // Root: wrap everything in BrowserRouter + AuthProvider
-const App = () => {
-  return (
-    <BrowserRouter>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
-    </BrowserRouter>
-  );
-};
+const App = () => (
+  <BrowserRouter>
+    <AuthProvider>
+      <AppRoutes />
+    </AuthProvider>
+  </BrowserRouter>
+);
 
 export default App;

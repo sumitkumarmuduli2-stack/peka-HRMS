@@ -54,7 +54,7 @@ const LoginPage = () => {
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: '100vh', width: '100%' }}>
-      
+
       {/* Left Panel: Visual Brand Image/Overlay */}
       <div style={{
         position: 'relative',
@@ -76,8 +76,8 @@ const LoginPage = () => {
           zIndex: 1
         }}></div>
 
-        <div 
-          onClick={() => navigate('/')} 
+        <div
+          onClick={() => navigate('/')}
           style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', zIndex: 2 }}
         >
           <div style={{
@@ -114,10 +114,10 @@ const LoginPage = () => {
         padding: '40px',
       }}>
         <div style={{ width: '100%', maxWidth: '400px' }}>
-          
-          <button 
-            onClick={() => navigate('/')} 
-            className="btn btn-text" 
+
+          <button
+            onClick={() => navigate('/')}
+            className="btn btn-text"
             style={{ marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.9rem' }}
           >
             <FiArrowLeft /> Back to Home
@@ -151,9 +151,9 @@ const LoginPage = () => {
 
               {/* Credentials list helper for demo ease */}
               <div style={{ backgroundColor: 'rgba(50, 27, 114, 0.05)', padding: '10px 14px', borderRadius: '8px', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '20px' }}>
-                <strong>Demo Logins:</strong><br/>
-                • Admin: <code>admin@peka.com</code> / <code>adminpassword123</code><br/>
-                • HR: <code>hr@peka.com</code> / <code>hrpassword123</code><br/>
+                <strong>Demo Logins:</strong><br />
+                • Admin: <code>admin@peka.com</code> / <code>adminpassword123</code><br />
+                • HR: <code>hr@peka.com</code> / <code>hrpassword123</code><br />
                 • Employee: <code>employee@peka.com</code> / <code>employeepassword123</code>
               </div>
 
