@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import api from '../../services/api';
+import api from '../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { FiBell, FiCheckCircle, FiCalendar, FiCheckSquare, FiInfo, FiBriefcase, FiAlertCircle, FiCheck } from 'react-icons/fi';
 
